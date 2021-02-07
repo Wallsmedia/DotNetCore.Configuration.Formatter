@@ -1,0 +1,16 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <Product>DotNetCore Configuration Formatters for Microsoft.Extensions.Configuration.</Product>
+    <Authors>Wallsmedia Ltd</Authors>
+    <Copyright>Copyright $([System.DateTime]::Now.ToString('yyyy')) © Artem &amp; Alex Paskhin 2018-2021. All rights reserved.</Copyright>
+    <Version>5.0.0</Version>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <DotNetCoreAppVersions>net5.0</DotNetCoreAppVersions>
+    <DotNetCoreAppVersionTest>net5.0</DotNetCoreAppVersionTest>
+    <DotNetCoreVersions>netstandard2.0,netstandard2.1</DotNetCoreVersions>
+  </PropertyGroup>
+  
+</Project>
