@@ -5,7 +5,10 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
     <PackageReleaseNotes>Supports only net 5.0</PackageReleaseNotes>
-    <Description>DotNetCore Configuration Formatters for Microsoft.Extensions.Configuration.</Description>
+    <Description>
+      DotNetCore Configuration Formatters for Microsoft.Extensions.Configuration.
+      It allows to application configuration values to be formatted with using key values of other configuration sections and providers.
+    </Description>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DisableImplicitFrameworkReferences)' != 'true' And '$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(_TargetFrameworkVersionWithoutV)' &gt;= '3.0'">
@@ -14,7 +17,7 @@
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageOutputPath>../../.nupkgs</PackageOutputPath>
+    <PackageOutputPath>../.nupkgs</PackageOutputPath>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
@@ -23,6 +26,10 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../build/Key.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter.git</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <PackageTags>DotNetCore Configuration Microsoft Extensions Formatter</PackageTags>
   </PropertyGroup>
   
   <ItemGroup>
