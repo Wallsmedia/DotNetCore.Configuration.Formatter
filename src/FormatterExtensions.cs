@@ -95,11 +95,6 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The wrapped configuration.</returns>
         public static ConfigurationFormatter UseFormater(this IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
         {
-            if (keyValueMap is null)
-            {
-                throw new System.ArgumentNullException(nameof(keyValueMap));
-            }
-
             return new ConfigurationFormatter(configuration) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
 
