@@ -11,6 +11,9 @@ cross platform .NET IDE**
 
 #### Version 5.0.0
   - Support SDK v.5.0-*
+  
+#### Version 3.1.0
+  - Support SDK v.3.1-*
 
 **DotNetCore.Configuration.Formatter** is a simple formatter implements configuration-driven templates
 [**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0) 
