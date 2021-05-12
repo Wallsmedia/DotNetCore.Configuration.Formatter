@@ -1,26 +1,5 @@
 ## DotNetCore Configuration Templates 
 
-### Development Supported by JetBrains Open Source Program:
-
-**Rider** <a href="https://www.jetbrains.com/?from=XmlResult"> <img src="https://github.com/Wallsmedia/XmlResult/blob/master/Logo/rider/logo.png?raw=true" Width="40p" /></a> **Fast & powerful,
-cross platform .NET IDE**
-
-**ReSharper** <a href="https://www.jetbrains.com/?from=XmlResult"> <img src="https://github.com/Wallsmedia/XmlResult/blob/master/Logo/resharper/logo.png?raw=true" Width="40p" /></a> **The Visual Studio Extension for .NET Developers**
-
-#### DotNetCore.Configuration.Formatter
-
-#### Version 6.0.0
-  - Support SDK v.6.0-*
-
-#### Version 5.0.0
-  - Support SDK v.5.0-*
-
-#### Version 5.0.0
-  - Support SDK v.5.0-*
-  
-#### Version 3.1.0
-  - Support SDK v.3.1-*
-  
 **DotNetCore.Configuration.Formatter** is a simple Configuration ASP.NET Core Templates for
 [**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0).
 It is used various [**Configuration Providers**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0#configuration-providers)

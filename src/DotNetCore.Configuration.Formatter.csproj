@@ -4,11 +4,11 @@
     <TargetFramework>$(DotNetCoreAppVersions)</TargetFramework>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
-    <PackageReleaseNotes>Supports only net 5.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Supports only net 6.0</PackageReleaseNotes>
     <Description>
       DotNetCore Configuration Formatters for Microsoft.Extensions.Configuration.
-      It allows to application configuration values to be formatted with using key values of other configuration sections and providers.
-    </Description>
+It allows to application configuration values to be formatted with using key values of other configuration providers sections
+</Description>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DisableImplicitFrameworkReferences)' != 'true' And '$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(_TargetFrameworkVersionWithoutV)' &gt;= '3.0'">
@@ -31,6 +31,16 @@
     <RepositoryType>github</RepositoryType>
     <PackageTags>DotNetCore Configuration Microsoft Extensions Formatter</PackageTags>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\README.md" 
+          Pack="true" 
+          PackagePath="\"/>
+  </ItemGroup>
   
   <ItemGroup>
     <None Include="..\LICENSE.txt">
