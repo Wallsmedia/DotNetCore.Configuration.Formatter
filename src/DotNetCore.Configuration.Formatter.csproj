@@ -34,12 +34,12 @@ It allows to application configuration values to be formatted with using key val
 
   <PropertyGroup>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>6.0.0</Version>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\docs\README.md" 
-          Pack="true" 
-          PackagePath="\"/>
+    <None Include="..\docs\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   
   <ItemGroup>
