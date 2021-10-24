@@ -1,12 +1,12 @@
 ## DotNetCore Configuration Templates 
 
 **DotNetCore.Configuration.Formatter** is a simple Configuration ASP.NET Core Templates for
-[**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0).
-It is used various [**Configuration Providers**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0#configuration-providers)
+[**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0).
+It is used [**Configuration Providers**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#configuration-providers)
 for generating configuration value text output by substituting Configuration **Key** with its **Value**.
 
 Annotations '**\{...\}**' in the template refer to elements of the configuration data structure.
-It allows to application configuration values to be annotated and formatted with using key values of other configuration sections and providers.
+It allows to application configuration values to be resloved and formatted with using key values of other configuration sections and providers.
 
 ### Nuget.org
 
@@ -14,19 +14,18 @@ It allows to application configuration values to be annotated and formatted with
 
 # Version: 6.0.0
 **.Net Core App support**
-- Supports: **net5.0**
+- Supports: **net 6.0**
 
 # Version: 5.0.0
 **.Net Core App support**
-- Supports: **net5.0**
+- Supports: **net 5.0**
 
 ## Annotation format syntax
 
 |  Annotation   | Definition  |
 -----------------------------------------------   | ---  |
-  **\{Key}**  |  If the **Key**  reference will be located/resolved it will be replaced with a **value**.
-  If **\{Key}** is not found |The reference will not be located it will be replaced with the  '**?NotFound?**`.
-  **\{Key??Default}**   | If the **Key** reference will not be located in it will be replaced with the **Default**.
+  **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found; it will be replaced with the  '**?NotFound?**`.
+ **\{Key??Default}**   | If the **Key** reference will not be resolved in it will be replaced with the **Default**.
   **\{{{Key3}Key2}Key1}**   |  Supports recursive references substitution, it will be replaced with a final constructed reference **value**.
 
 
