@@ -12,7 +12,7 @@ It allows to application configuration values to be resloved and formatted with 
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
-# Version: 6.0.0
+# Version: 6.0.1
 **.Net Core App support**
 - Supports: **net 6.0**
 

@@ -50,7 +50,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The new instance if successful, null otherwise.</returns>
         public static T GetTypeNameFormatted<T>(this IConfiguration configuration)
         {
-            return (T)GetFormatted(configuration, typeof(T), nameof(T));
+            return (T)GetFormatted(configuration, typeof(T), typeof(T).Name);
         }
 
         /// <summary>

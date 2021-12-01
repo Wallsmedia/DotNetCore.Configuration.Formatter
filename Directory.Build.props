@@ -3,8 +3,8 @@
   <PropertyGroup>
     <Product>DotNetCore Configuration Formatters for Microsoft.Extensions.Configuration.</Product>
     <Authors>Wallsmedia Ltd</Authors>
-    <Copyright>Copyright $([System.DateTime]::Now.ToString('yyyy')) © Artem &amp; Alex Paskhin 2018-2021. All rights reserved.</Copyright>
-    <Version>6.0.0-preview1</Version>
+    <Copyright>Copyright $([System.DateTime]::Now.ToString('yyyy')) © Artem &amp; Alex Paskhin. All rights reserved.</Copyright>
+    <Version>6.0.0</Version>
   </PropertyGroup>
   
   <PropertyGroup>
