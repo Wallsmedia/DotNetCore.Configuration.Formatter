@@ -1,50 +1,43 @@
 ## DotNetCore Configuration Templates 
 
-### Development Supported by JetBrains Open Source Program:
-
-**Rider** <a href="https://www.jetbrains.com/?from=XmlResult"> <img src="https://github.com/Wallsmedia/XmlResult/blob/master/Logo/rider/logo.png?raw=true" Width="40p" /></a> **Fast & powerful,
-cross platform .NET IDE**
-
-**ReSharper** <a href="https://www.jetbrains.com/?from=XmlResult"> <img src="https://github.com/Wallsmedia/XmlResult/blob/master/Logo/resharper/logo.png?raw=true" Width="40p" /></a> **The Visual Studio Extension for .NET Developers**
-
-#### DotNetCore.Configuration.Formatter
-
-#### Version 6.0.0
-  - Support SDK v.6.0-*
-
-#### Version 5.0.0
-  - Support SDK v.5.0-*
-
-#### Version 5.0.0
-  - Support SDK v.5.0-*
-  
-#### Version 3.1.0
-  - Support SDK v.3.1-*
-  
 **DotNetCore.Configuration.Formatter** is a simple Configuration ASP.NET Core Templates for
-[**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0).
-It is used various [**Configuration Providers**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0#configuration-providers)
+[**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0).
+It is used [**Configuration Providers**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#configuration-providers)
 for generating configuration value text output by substituting Configuration **Key** with its **Value**.
 
 Annotations '**\{...\}**' in the template refer to elements of the configuration data structure.
-It allows to application configuration values to be annotated and formatted with using key values of other configuration sections and providers.
+It allows to application configuration values to be resloved and formatted with using key values of other configuration sections and providers.
 
 ### Nuget.org
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
+# Version: 6.0.1
+**.Net Core App support**
+- Supports: **net 6.0**
+
+# Version: 5.0.0
+**.Net Core App support**
+- Supports: **net 5.0**
 
 ## Annotation format syntax
 
 |  Annotation   | Definition  |
 -----------------------------------------------   | ---  |
-  **\{Key}**  |  If the **Key**  reference will be located/resolved it will be replaced with a **value**.
-  If **\{Key}** is not found |The reference will not be located it will be replaced with the  '**?NotFound?**`.
-  **\{Key??Default}**   | If the **Key** reference will not be located in it will be replaced with the **Default**.
+  **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found; it will be replaced with the  '**?NotFound?**`.
+ **\{Key??Default}**   | If the **Key** reference will not be resolved in it will be replaced with the **Default**.
   **\{{{Key3}Key2}Key1}**   |  Supports recursive references substitution, it will be replaced with a final constructed reference **value**.
 
 
+## Azure Key Vault Integration 
+
+Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Secrets](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvSecrets).
+Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Certificates](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvCertificates)
+
 ## How to use
+
+
+
 
 For example you have the following:
 
@@ -102,8 +95,7 @@ public class ApplicationConfiguration
      var applicationConfig = Configuration.UseFormater()
      .GetSection(nameof(ApplicationConfiguration))
      .Get<ApplicationConfiguration>();
-
-```
+  ```
 
 or with **shorthand** 
 

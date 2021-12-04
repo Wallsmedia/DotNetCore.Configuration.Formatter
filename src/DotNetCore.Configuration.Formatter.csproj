@@ -38,7 +38,7 @@ It allows to application configuration values to be formatted with using key val
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\docs\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   
   <ItemGroup>
