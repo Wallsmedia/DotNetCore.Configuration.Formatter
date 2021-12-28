@@ -189,9 +189,11 @@ namespace Microsoft.Extensions.Configuration
                 }
                 else
                 {
-                    sb.Append('?');
+                    // not found 
+                    sb.Append('{');
                     sb.Append(valueKeyName);
-                    sb.Append('?');
+                    sb.Append('}');
+                    complete = true;
                 }
                 if (closeBraceIndex + 1 < value.Length)
                 {

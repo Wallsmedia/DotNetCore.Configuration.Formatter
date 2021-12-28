@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.Configuration
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        /// <param name="section">The configuration section to wrap with a formatter.</param>
+        /// <param name="configuration">The configuration section to wrap with a formatter.</param>
         public ConfigurationFormatter(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -42,7 +42,7 @@ namespace Microsoft.Extensions.Configuration
         /// <summary>
         /// Gets or sets a configuration value.
         /// The configuration value will be formatted.
-        /// </summar
+        /// </summary>
         /// <param name="key">The configuration key.</param>
         /// <returns>The configuration value.</returns>
         public string this[string key]

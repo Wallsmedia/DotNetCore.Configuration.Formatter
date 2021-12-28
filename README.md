@@ -14,7 +14,7 @@ It allows to application configuration values to be resloved and formatted with 
 
 # Version: 6.0.x
 **.Net Core App support**
-- Supports: **net 6.0**
+- Supports: **net 6.0**, **net 5.0**, **netcoreapp 3.1**
 
 # Version: 5.0.0
 **.Net Core App support**
@@ -24,7 +24,7 @@ It allows to application configuration values to be resloved and formatted with 
 
 |  Annotation   | Definition  |
 -----------------------------------------------   | ---  |
-  **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found; it will be replaced with the  '**?NotFound?**`.
+  **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found, it will not be replaced and recursive references substitution will be cancelled,i.e JSON frendly.
  **\{Key??Default}**   | If the **Key** reference will not be resolved in it will be replaced with the **Default**.
   **\{{{Key3}Key2}Key1}**   |  Supports recursive references substitution, it will be replaced with a final constructed reference **value**.
 
@@ -122,6 +122,6 @@ The Web Service will be provided with filly resolved configuration with Azure Ke
  var formatted = format.FormatString(keyValues);
 
 Formated string will be 
-    "Get the Value-1 and complex: Complex-Value-1 and Default ?NotFound?"
+    "Get the Value-1 and complex: Complex-Value-1 and Default {NotFound}"
 ```
 
