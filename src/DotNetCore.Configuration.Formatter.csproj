@@ -4,7 +4,7 @@
     <TargetFrameworks>$(DotNetCoreAppVersions)</TargetFrameworks>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
-    <PackageReleaseNotes>Supports only net 6.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Supports $(DotNetCoreAppVersions). JSON frendly.</PackageReleaseNotes>
     
     <Description>
       DotNetCore.Configuration.Formatter is a simple Configuration ASP.NET Core Templates for Microsoft.Extensions.Configuration.
