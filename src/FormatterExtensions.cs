@@ -1,7 +1,7 @@
 //   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2020. All rights reserved.
+// Copyright (c) i-Wallsmedia 2022. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -9,6 +9,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace Microsoft.Extensions.Configuration
 {
@@ -126,7 +127,6 @@ namespace Microsoft.Extensions.Configuration
         public static string FormatKeyValue(this IConfiguration configuration, string key, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
         {
             var value = configuration[key];
-
             return FormatValue(value, keyValueMap, sectionSearchList, configuration);
         }
 
@@ -204,6 +204,90 @@ namespace Microsoft.Extensions.Configuration
             } while (!complete);
 
             return value;
+        }
+
+        /// <summary>
+        /// Resolve the key value of the configuration.
+        /// Gets configuration value by a key, formats it and stores back.
+        /// </summary>
+        /// <param name="configuration">The configuration instance.</param>
+        /// <param name="key">The configuration key</param>
+        /// <returns>The operation result.True if a key value has been changed.</returns>
+        public static bool ResolveKeyValue(this IConfiguration configuration, string key)
+        {
+            var oldValue = configuration[key];
+            var newValue = FormatValue(oldValue, null, null, configuration);
+            configuration[key] = newValue;
+            newValue = configuration[key];
+            return oldValue != newValue;
+        }
+
+        /// <summary>
+        /// Resolve all keys value of the configuration.
+        /// Gets configuration values by keys, formats it and stores back.
+        /// </summary>
+        /// <param name="configuration">The configuration instance.</param>
+        /// <returns>True if keys values have might been changed.</returns>
+        public static bool ResolveAllKeyValues(this IConfiguration configuration)
+        {
+            var rootConfiguration = configuration as IConfigurationRoot;
+            if (rootConfiguration != null)
+            {
+                var keys = rootConfiguration.AllConfigurationKeys();
+                foreach (var key in keys)
+                {
+                    var oldValue = configuration[key];
+                    configuration[key] = FormatValue(oldValue, null, null, configuration);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Get a list of all Configuration keys
+        /// </summary>
+        /// <param name="root">The root configuration instance.</param>
+        /// <returns>List of all keys.</returns>
+        public static List<string> AllConfigurationKeys(this IConfigurationRoot root)
+        {
+            (string Value, IConfigurationProvider Provider) GetValueAndProvider(
+                                                                IConfigurationRoot root,
+                                                                string key)
+            {
+                foreach (IConfigurationProvider provider in root.Providers.Reverse())
+                {
+                    if (provider.TryGet(key, out string value))
+                    {
+                        return (value, provider);
+                    }
+                }
+
+                return (null, null);
+            }
+
+            void RecurseChildren(
+                    HashSet<string> keys,
+                    IEnumerable<IConfigurationSection> children, string rootPath)
+            {
+                foreach (IConfigurationSection child in children)
+                {
+                    (string Value, IConfigurationProvider Provider) valueAndProvider = GetValueAndProvider(root, child.Path);
+
+                    if (valueAndProvider.Provider != null)
+                    {
+                        keys.Add(rootPath + ":" + child.Key);
+                    }
+
+                    RecurseChildren(keys, child.GetChildren(), child.Path);
+                }
+            }
+
+            var keys = new HashSet<string>();
+            RecurseChildren(keys, root.GetChildren(), "");
+            return keys.ToList();
         }
 
         private static string KeyValue(string keyName, Dictionary<string, string> keyValueMap, List<string> sectionList = null, IConfiguration configuration = null)

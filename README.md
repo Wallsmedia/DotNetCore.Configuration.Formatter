@@ -12,9 +12,13 @@ It allows to application configuration values to be resloved and formatted with 
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
-# Version: 6.0.x
+# Version: 6.1.x
 **.Net Core App support**
 - Supports: **net 6.0**, **net 5.0**, **netcoreapp 3.1**
+- Azure Function Support
+  - **ResolveKeyValue**
+  - **ResolveAllKeyValues**
+  - **AllConfigurationKeys**
 
 # Version: 5.0.0
 **.Net Core App support**
@@ -107,6 +111,23 @@ or with **shorthand**
 
 The Web Service will be provided with filly resolved configuration with Azure Key Vault secrets. 
 
+##### Azure Function Support
+
+Some software used a dynamic IConfiguration in the code. In this case  "DotNetCore Configuration Templates" doesn't work.
+For example it is Azure Functions. There added a special feature **ResolveKeyValue**.
+
+``` CSharp
+    var configuration = ... // Get IConfiguration
+    var keyToResolve = "MyConfigurationKey".
+    var isUpdated = configuration.ResolveKeyValue(keyToResolve);
+```
+
+Resolve all keys in a configuration.
+
+``` CSharp
+    var configuration = ... // Get IConfiguration
+    var isUpdated = configuration.ResolveAllKeyValues();
+```
 
 ## Dot Net Core
 

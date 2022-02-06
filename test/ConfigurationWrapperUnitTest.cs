@@ -1,7 +1,7 @@
 //   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2020. All rights reserved.
+// Copyright (c) i-Wallsmedia 2022. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -34,7 +34,64 @@ namespace DotNetCore.Configuration.Formatter.Test
 ";
         public ConfigurationWrapperUnitTest()
         {
-            configuration = new ConfigurationBuilder().AddJsonStream(StreamHelpers.StringToStream(json)).Build();
+            configuration = new ConfigurationBuilder()
+                .AddJsonStream(StreamHelpers.StringToStream(json))
+                .Build();
+        }
+
+        [Fact]
+        public void AllConfigurationKeysTest()
+        {
+
+            // Arrange
+            configuration["P: a: s: s: w: o: r: d"] = "{ secret: sql - service}";
+
+            // Act
+            var keys = ((IConfigurationRoot)configuration).AllConfigurationKeys();
+
+
+            // Assert
+            Assert.Equal(4, keys.Count);
+
+        }
+
+        [Fact]
+        public void ResolveKeyValueConfigurationTest()
+        {
+
+            // Arrange
+            configuration["secret:sql-service"] = "PassWord@01";
+
+            // Act
+            var changed = configuration.ResolveKeyValue("ConfigurationAppExample:Password");
+
+
+            // Assert
+            Assert.True(changed);
+            Assert.Equal(configuration["secret:sql-service"], configuration["ConfigurationAppExample:Password"]);
+        }
+
+        [Fact]
+        public void ResolveAllKeyValuesTest()
+        {
+            // Arrange
+            // simulate add into configuration key values
+            configuration["protocol"] = "protocol";
+            configuration["app-env"] = "dev";
+            configuration["secret:sql-service"] = "PASSWORD";
+            // get wrapper
+            var changed = configuration.ResolveAllKeyValues();
+
+            // Act
+            var configExample = configuration
+                .GetSection(nameof(ConfigurationAppExample))
+                .Get<ConfigurationAppExample>();
+
+            // Assert
+            Assert.True(changed);
+            Assert.Equal(configuration["secret:sql-service"], configExample.Password);
+            Assert.Equal("protocol://sql-dev-data-", configExample.ConnectionUrl);
+            Assert.Equal("sql-dev-example-login", configExample.Name);
         }
 
         [Fact]
