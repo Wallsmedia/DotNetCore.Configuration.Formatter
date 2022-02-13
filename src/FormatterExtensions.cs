@@ -237,12 +237,13 @@ namespace Microsoft.Extensions.Configuration
                 foreach (var key in keys)
                 {
                     var oldValue = configuration[key];
-                    configuration[key] = FormatValue(oldValue, null, null, configuration);
+                    if (oldValue != null && oldValue.IndexOf('{') != -1)
+                    {
+                        configuration[key] = FormatValue(oldValue, null, null, configuration);
+                    }
                 }
-
                 return true;
             }
-
             return false;
         }
 
@@ -278,7 +279,14 @@ namespace Microsoft.Extensions.Configuration
 
                     if (valueAndProvider.Provider != null)
                     {
-                        keys.Add(rootPath + ":" + child.Key);
+                        if (string.IsNullOrEmpty(rootPath))
+                        {
+                            keys.Add(child.Key);
+                        }
+                        else
+                        {
+                            keys.Add(rootPath + ":" + child.Key);
+                        }
                     }
 
                     RecurseChildren(keys, child.GetChildren(), child.Path);

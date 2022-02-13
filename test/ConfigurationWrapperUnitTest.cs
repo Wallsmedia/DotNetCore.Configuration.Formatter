@@ -45,13 +45,15 @@ namespace DotNetCore.Configuration.Formatter.Test
 
             // Arrange
             configuration["P: a: s: s: w: o: r: d"] = "{ secret: sql - service}";
+            configuration["UseDevelopmentStorage"] = "true";
 
             // Act
             var keys = ((IConfigurationRoot)configuration).AllConfigurationKeys();
 
 
             // Assert
-            Assert.Equal(4, keys.Count);
+            Assert.Equal(5, keys.Count);
+            Assert.True(keys.Contains("UseDevelopmentStorage"));
 
         }
 
