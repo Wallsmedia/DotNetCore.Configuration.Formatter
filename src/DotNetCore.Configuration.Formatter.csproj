@@ -1,52 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>$(DotNetCoreAppVersions)</TargetFrameworks>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
-    <PackageReleaseNotes>Supports $(DotNetCoreAppVersions). JSON frendly.</PackageReleaseNotes>
-    
-    <Description>
-      DotNetCore.Configuration.Formatter is a simple Configuration ASP.NET Core Templates for Microsoft.Extensions.Configuration.
-      It is used Configuration Providers for generating configuration value text output by substituting Configuration Key with its Value.
-    </Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>$(DotNetCoreAppVersion);$(DotNetFrameworkVersion);$(DotNetCoreVersion);$(DotNetCoreVersion20)</TargetFrameworks>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
+		<PackageReleaseNotes>Supports $(TargetFrameworks). JSON frendly.</PackageReleaseNotes>
 
-  <ItemGroup Condition="'$(DisableImplicitFrameworkReferences)' != 'true' And '$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(_TargetFrameworkVersionWithoutV)' &gt;= '3.0'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" IsImplicitlyDefined="true" />
-  </ItemGroup>
+		<Description>
+			DotNetCore.Configuration.Formatter is a simple Configuration ASP.NET Core Templates for Microsoft.Extensions.Configuration.
+			It is used Configuration Providers for generating configuration value text output by substituting Configuration Key with its Value.
+		</Description>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageOutputPath>../.nupkgs</PackageOutputPath>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
+	<ItemGroup Condition="'$(DisableImplicitFrameworkReferences)' != 'true' And '$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(_TargetFrameworkVersionWithoutV)' &gt;= '3.0'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" IsImplicitlyDefined="true" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../build/Key.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter.git</RepositoryUrl>
-    <RepositoryType>github</RepositoryType>
-    <PackageTags>DotNetCore Configuration Microsoft Extensions Formatter</PackageTags>
-  </PropertyGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == '$(DotNetFrameworkVersion)' Or '$(TargetFramework)' == '$(DotNetCoreVersion)' Or '$(TargetFramework)' == '$(DotNetCoreVersion20)'">
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageOutputPath>../.nupkgs</PackageOutputPath>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<PropertyGroup>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>../build/Key.snk</AssemblyOriginatorKeyFile>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageProjectUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter.git</RepositoryUrl>
+		<RepositoryType>github</RepositoryType>
+		<PackageTags>DotNetCore Configuration Microsoft Extensions Formatter</PackageTags>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\LICENSE.txt">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 
 </Project>

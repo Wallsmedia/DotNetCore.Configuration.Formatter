@@ -12,17 +12,13 @@ It allows to application configuration values to be resloved and formatted with 
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
-# Version: 6.1.x
+# Version: 6.2.x
 **.Net Core App support**
-- Supports: **net 6.0**, **net 5.0**, **netcoreapp 3.1**
+- Supports: **net 6.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
 - Azure Function Support
   - **ResolveKeyValue**
   - **ResolveAllKeyValues**
   - **AllConfigurationKeys**
-
-# Version: 5.0.0
-**.Net Core App support**
-- Supports: **net 5.0**
 
 ## Annotation format syntax
 

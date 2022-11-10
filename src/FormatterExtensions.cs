@@ -166,7 +166,7 @@ namespace Microsoft.Extensions.Configuration
                 sb.Append(value, 0, openBraceIndex);
 
                 var valueKeyName = value.Substring(openBraceIndex + 1, closeBraceIndex - openBraceIndex - 1);
-                var defaults = valueKeyName.Split("??", System.StringSplitOptions.RemoveEmptyEntries);
+                var defaults = valueKeyName.Split(new string[] { "??" }, System.StringSplitOptions.RemoveEmptyEntries);
                 string encodeKeyName;
                 if (defaults.Length > 1)
                 {
@@ -255,10 +255,10 @@ namespace Microsoft.Extensions.Configuration
         public static List<string> AllConfigurationKeys(this IConfigurationRoot root)
         {
             (string Value, IConfigurationProvider Provider) GetValueAndProvider(
-                                                                IConfigurationRoot root,
+                                                                IConfigurationRoot rootF,
                                                                 string key)
             {
-                foreach (IConfigurationProvider provider in root.Providers.Reverse())
+                foreach (IConfigurationProvider provider in rootF.Providers.Reverse())
                 {
                     if (provider.TryGet(key, out string value))
                     {
@@ -270,7 +270,7 @@ namespace Microsoft.Extensions.Configuration
             }
 
             void RecurseChildren(
-                    HashSet<string> keys,
+                    HashSet<string> keysF,
                     IEnumerable<IConfigurationSection> children, string rootPath)
             {
                 foreach (IConfigurationSection child in children)
@@ -281,15 +281,15 @@ namespace Microsoft.Extensions.Configuration
                     {
                         if (string.IsNullOrEmpty(rootPath))
                         {
-                            keys.Add(child.Key);
+                            keysF.Add(child.Key);
                         }
                         else
                         {
-                            keys.Add(rootPath + ":" + child.Key);
+                            keysF.Add(rootPath + ":" + child.Key);
                         }
                     }
 
-                    RecurseChildren(keys, child.GetChildren(), child.Path);
+                    RecurseChildren(keysF, child.GetChildren(), child.Path);
                 }
             }
 
