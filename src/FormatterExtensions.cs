@@ -25,7 +25,7 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="value">A string to format.</param>
         /// <param name="keyValues">A key value map.</param>
         /// <example>
-        ///     var keyValues = new Dictionary<string, string>()
+        ///     var keyValues = new Dictionary&gt;string, string>()
         ///     {
         ///         ["Key-1"] = "Value-1",
         ///         ["Key-Value-1"] = "Complex-Value-1"
@@ -103,6 +103,7 @@ namespace Microsoft.Extensions.Configuration
         /// Wraps <see cref="IConfigurationSection"/> with <see cref="ConfigurationSectionFormatter"/>.
         /// </summary>
         /// <param name="configurationSection">The configuration section instance.</param>
+        /// <param name="configuration">The configuration instance.</param>
         /// <param name="sectionSearchList">The list of sections for key search.</param>
         /// <param name="keyValueMap">The key to value map used for formating.</param>
         /// <returns>The wrapped configuration section.</returns>
