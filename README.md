@@ -12,9 +12,9 @@ It allows to application configuration values to be resloved and formatted with 
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
-# Version: 6.2.x
+# Version: 7.0.x
 **.Net Core App support**
-- Supports: **net 6.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
+- Supports: **net 7.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
 - Azure Function Support
   - **ResolveKeyValue**
   - **ResolveAllKeyValues**
