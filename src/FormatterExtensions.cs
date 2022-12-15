@@ -180,17 +180,19 @@ namespace Microsoft.Extensions.Configuration
 
                 var kevalue = KeyValue(encodeKeyName, keyValueMap, sectionSearchList, configuration);
 
-                if (!string.IsNullOrEmpty(kevalue))
+                if (kevalue != null)
                 {
+                    // the key value has been resolved 
                     sb.Append(kevalue);
                 }
                 else if (defaults.Length > 1)
                 {
+                    // the key value has been resolved vis default value
                     sb.Append(defaults[1]);
                 }
                 else
                 {
-                    // not found 
+                    // the key value has not been resolved 
                     sb.Append('{');
                     sb.Append(valueKeyName);
                     sb.Append('}');
@@ -327,7 +329,7 @@ namespace Microsoft.Extensions.Configuration
                 }
             }
 
-            var result = string.Empty;
+            string result = null;
 
             if (configuration != null)
             {
