@@ -16,6 +16,8 @@ namespace DotNetCore.Configuration.Formatter.Test
         public string ConnectionUrl { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
+        public string EmptyString { get; set; }
+        public string NotFound { get; set; }
     }
 
     public class ConfigurationWrapperUnitTest
@@ -27,7 +29,9 @@ namespace DotNetCore.Configuration.Formatter.Test
     ""ConfigurationAppExample"": {
     ""ConnectionUrl"": ""{protocol}://sql-{app-env}-data-"",
     ""Name"": ""sql-{app-env}-example-login"",
-    ""Password"": ""{secret:sql-service}""
+    ""Password"": ""{secret:sql-service}"",
+    ""EmptyString"": ""{secret:empty-string}"",
+    ""NotFound"": ""{secret:notfound}""
   }
 
 }
@@ -52,7 +56,7 @@ namespace DotNetCore.Configuration.Formatter.Test
 
 
             // Assert
-            Assert.Equal(5, keys.Count);
+            Assert.Equal(7, keys.Count);
             Assert.True(keys.Contains("UseDevelopmentStorage"));
 
         }
@@ -81,6 +85,7 @@ namespace DotNetCore.Configuration.Formatter.Test
             configuration["protocol"] = "protocol";
             configuration["app-env"] = "dev";
             configuration["secret:sql-service"] = "PASSWORD";
+            configuration["secret:empty-string"] = "";
             // get wrapper
             var changed = configuration.ResolveAllKeyValues();
 
@@ -94,6 +99,8 @@ namespace DotNetCore.Configuration.Formatter.Test
             Assert.Equal(configuration["secret:sql-service"], configExample.Password);
             Assert.Equal("protocol://sql-dev-data-", configExample.ConnectionUrl);
             Assert.Equal("sql-dev-example-login", configExample.Name);
+            Assert.Equal(string.Empty, configExample.EmptyString);
+            Assert.Equal("{secret:notfound}", configExample.NotFound);
         }
 
         [Fact]
@@ -104,6 +111,7 @@ namespace DotNetCore.Configuration.Formatter.Test
             configuration["protocol"] = "protocol";
             configuration["app-env"] = "dev";
             configuration["secret:sql-service"] = "PASSWORD";
+            configuration["secret:empty-string"] = "";
             // get wrapper
             var configurationWrapper = configuration.UseFormater();
 
@@ -116,6 +124,9 @@ namespace DotNetCore.Configuration.Formatter.Test
             Assert.Equal(configuration["secret:sql-service"], configExample.Password);
             Assert.Equal("protocol://sql-dev-data-", configExample.ConnectionUrl);
             Assert.Equal("sql-dev-example-login", configExample.Name);
+            Assert.Equal(string.Empty, configExample.EmptyString);
+            Assert.Equal("{secret:notfound}", configExample.NotFound);
+
         }
 
     }
