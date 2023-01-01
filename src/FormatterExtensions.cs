@@ -258,29 +258,23 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>List of all keys.</returns>
         public static List<string> AllConfigurationKeys(this IConfigurationRoot root)
         {
-            (string Value, IConfigurationProvider Provider) GetValueAndProvider(
-                                                                IConfigurationRoot rootF,
-                                                                string key)
+            (string Value, IConfigurationProvider Provider) GetValueAndProvider(IConfigurationRoot rootF, string key)
             {
                 foreach (IConfigurationProvider provider in rootF.Providers.Reverse())
                 {
-                    if (provider.TryGet(key, out string value))
+                    var probe = provider.TryGet(key, out string value);
+                    if (probe || value != null)
                     {
                         return (value, provider);
                     }
                 }
-
                 return (null, null);
             }
-
-            void RecurseChildren(
-                    HashSet<string> keysF,
-                    IEnumerable<IConfigurationSection> children, string rootPath)
+            void RecurseChildren(HashSet<string> keysF, IEnumerable<IConfigurationSection> children, string rootPath)
             {
                 foreach (IConfigurationSection child in children)
                 {
                     (string Value, IConfigurationProvider Provider) valueAndProvider = GetValueAndProvider(root, child.Path);
-
                     if (valueAndProvider.Provider != null)
                     {
                         if (string.IsNullOrEmpty(rootPath))
@@ -292,14 +286,24 @@ namespace Microsoft.Extensions.Configuration
                             keysF.Add(rootPath + ":" + child.Key);
                         }
                     }
-
                     RecurseChildren(keysF, child.GetChildren(), child.Path);
                 }
             }
-
             var keys = new HashSet<string>();
             RecurseChildren(keys, root.GetChildren(), "");
             return keys.ToList();
+        }
+
+        /// <summary>
+        /// Verify that key exist even it is an empty string 
+        /// </summary>
+        /// <param name="root">The root configuration instance.</param>
+        /// <param name="complexKey">The probed key.</param>
+        /// <returns>Returns true if it exist.</returns>
+        public static bool ContainsComplexKey(this IConfigurationRoot root, string complexKey)
+        {
+            var list = root.AllConfigurationKeys();
+            return list.Any(k => k.ToLower() == complexKey.ToLower());
         }
 
         private static string KeyValue(string keyName, Dictionary<string, string> keyValueMap, List<string> sectionList = null, IConfiguration configuration = null)
@@ -329,12 +333,18 @@ namespace Microsoft.Extensions.Configuration
                     }
                 }
             }
-
-            var result = string.Empty;
+            string result = null;
 
             if (configuration != null)
             {
                 result = configuration[keyName];
+                if (result == null && configuration as IConfigurationRoot != null)
+                {
+                    if (((IConfigurationRoot)configuration).ContainsComplexKey(keyName))
+                    {
+                        result = string.Empty;
+                    }
+                }
             }
 
             return result;
