@@ -167,11 +167,14 @@ namespace Microsoft.Extensions.Configuration
                 sb.Append(value, 0, openBraceIndex);
 
                 var valueKeyName = value.Substring(openBraceIndex + 1, closeBraceIndex - openBraceIndex - 1);
+                var defaultValue = string.Empty;
+                bool useDefaults = valueKeyName.Contains("??");
                 var defaults = valueKeyName.Split(new string[] { "??" }, System.StringSplitOptions.RemoveEmptyEntries);
                 string encodeKeyName;
                 if (defaults.Length > 1)
                 {
                     encodeKeyName = defaults[0];
+                    defaultValue = defaults[1];
                 }
                 else
                 {
@@ -184,9 +187,9 @@ namespace Microsoft.Extensions.Configuration
                 {
                     sb.Append(kevalue);
                 }
-                else if (defaults.Length > 1)
+                else if (useDefaults)
                 {
-                    sb.Append(defaults[1]);
+                    sb.Append(defaultValue);
                 }
                 else
                 {
