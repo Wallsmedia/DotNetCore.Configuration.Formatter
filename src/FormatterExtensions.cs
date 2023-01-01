@@ -183,8 +183,9 @@ namespace Microsoft.Extensions.Configuration
 
                 var kevalue = KeyValue(encodeKeyName, keyValueMap, sectionSearchList, configuration);
 
-                if (!string.IsNullOrEmpty(kevalue))
+                if (kevalue != null)
                 {
+                    // the key value has been resolved 
                     sb.Append(kevalue);
                 }
                 else if (useDefaults)
