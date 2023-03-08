@@ -50,12 +50,39 @@ namespace DotNetCore.Configuration.Formatter.Test
         [InlineData("{Key}{Key4}_tail", "{Key}{Key4}_tail")]
         [InlineData("{Key}{Key4}", "{Key}{Key4}")]
         [InlineData("{Key}-{Key4}", "{Key}-{Key4}")]
-        [InlineData("{KeyMe??defaulVal}-{Key4ME??defaulVal}", "defaulVal-defaulVal")]
         [InlineData("{super-{Key1}-{Key4}}", "SuperReplace")]
+        [InlineData("{KeyMe??defaulVal}-{Key4ME??defaulVal}", "defaulVal-defaulVal")]
         [InlineData("{KeyDefault??}", "")]
         [InlineData("{KeyDefault??null}", null)]
+        [InlineData("{Key1??}", "Value1")]
+        [InlineData("{Key1??null}", "Value1")]
+        [InlineData("{??Key1}", "Value1")]
 
         public void TestFormatString(string source, string expected)
+        {
+            // Arrange 
+
+            // Act
+            var result = source.FormatString(keyValuesTest);
+
+            // Assert
+
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("{KeyMe??defaulVal}-{Key4ME??defaulVal}", "defaulVal-defaulVal")]
+        [InlineData("{KeyDefault??}", "")]
+        [InlineData("{KeyDefault????}", "")]
+        [InlineData("{KeyDefault??KeyDefault??KeyDefault????}", "KeyDefault")]
+        [InlineData("{KeyDefault????}", "")]
+        [InlineData("{KeyDefault??KeyDefault??null}", "KeyDefault")]
+        [InlineData("{Key1??}", "Value1")]
+        [InlineData("{Key1??null}", "Value1")]
+        [InlineData("{??Key1}", "Value1")]
+        [InlineData("{KeyDefault??{KeyDefault??null}}", null)]
+
+        public void TestFormatStringDefaults(string source, string expected)
         {
             // Arrange 
 
