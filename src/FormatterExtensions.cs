@@ -168,11 +168,14 @@ namespace Microsoft.Extensions.Configuration
                 sb.Append(value, 0, openBraceIndex);
 
                 var valueKeyName = value.Substring(openBraceIndex + 1, closeBraceIndex - openBraceIndex - 1);
+                var defaultValue = string.Empty;
+                bool useDefaults = valueKeyName.Contains("??");
                 var defaults = valueKeyName.Split(new string[] { "??" }, System.StringSplitOptions.RemoveEmptyEntries);
                 string encodeKeyName;
                 if (defaults.Length > 1)
                 {
                     encodeKeyName = defaults[0];
+                    defaultValue = defaults[1];
                 }
                 else
                 {
@@ -186,7 +189,7 @@ namespace Microsoft.Extensions.Configuration
                     // the key value has been resolved 
                     sb.Append(kevalue);
                 }
-                else if (defaults.Length > 1)
+                else if (useDefaults)
                 {
                     if (defaultValue == "null")
                     {
@@ -199,7 +202,7 @@ namespace Microsoft.Extensions.Configuration
                 }
                 else
                 {
-                    // the key value has not been resolved 
+                    // not found 
                     sb.Append('{');
                     sb.Append(valueKeyName);
                     sb.Append('}');
@@ -213,7 +216,7 @@ namespace Microsoft.Extensions.Configuration
                 sb.Clear();
             } while (!complete);
 
-            if(string.IsNullOrEmpty (value) && usedDefaultNull)
+            if (string.IsNullOrEmpty(value) && usedDefaultNull)
             {
                 return null;
             }
