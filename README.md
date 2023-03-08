@@ -12,21 +12,26 @@ It allows to application configuration values to be resloved and formatted with 
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
-# Version: 6.2.x
+# Version: 6.3.x
 **.Net Core App support**
 - Supports: **net 6.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
 - Azure Function Support
   - **ResolveKeyValue**
   - **ResolveAllKeyValues**
   - **AllConfigurationKeys**
+  - **\{Key??}** feature
+  - **\{Key??null}** feature
 
 ## Annotation format syntax
 
 |  Annotation   | Definition  |
 -----------------------------------------------   | ---  |
-  **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found, it will not be replaced and recursive references substitution will be cancelled,i.e JSON frendly.
+ **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found, it will not be replaced and recursive references substitution will be cancelled,i.e JSON frendly.
+**\{{{Key3}Key2}Key1}**   |  Supports recursive references substitution, it will be replaced with a final constructed reference **value**.
  **\{Key??Default}**   | If the **Key** reference will not be resolved in it will be replaced with the **Default**.
-  **\{{{Key3}Key2}Key1}**   |  Supports recursive references substitution, it will be replaced with a final constructed reference **value**.
+ **\{Key??}**   | If the **Key** reference will not be resolved in it will be replaced with the **string.Empty**.
+ **\{Key??null}**   | If the **Key** reference will not be resolved in it will be replaced with **null**.
+  
 
 
 ## Azure Key Vault Integration 

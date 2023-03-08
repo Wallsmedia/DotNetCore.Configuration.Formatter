@@ -1,7 +1,7 @@
 //   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2022. All rights reserved.
+// Copyright (c) i-Wallsmedia 2023. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -153,6 +153,7 @@ namespace Microsoft.Extensions.Configuration
 
             var sb = new StringBuilder();
             bool complete = false;
+            bool usedDefaultNull = false;
             do
             {
                 int openBraceIndex;
@@ -190,7 +191,14 @@ namespace Microsoft.Extensions.Configuration
                 }
                 else if (useDefaults)
                 {
-                    sb.Append(defaultValue);
+                    if (defaultValue == "null")
+                    {
+                        usedDefaultNull = true;
+                    }
+                    else
+                    {
+                        sb.Append(defaultValue);
+                    }
                 }
                 else
                 {
@@ -207,6 +215,11 @@ namespace Microsoft.Extensions.Configuration
                 value = sb.ToString();
                 sb.Clear();
             } while (!complete);
+
+            if(string.IsNullOrEmpty (value) && usedDefaultNull)
+            {
+                return null;
+            }
 
             return value;
         }
