@@ -177,6 +177,10 @@ namespace Microsoft.Extensions.Configuration
                     encodeKeyName = defaults[0];
                     defaultValue = defaults[1];
                 }
+                else if (defaults.Length == 1 && useDefaults)
+                {
+                    encodeKeyName = defaults[0];
+                }
                 else
                 {
                     encodeKeyName = valueKeyName;
