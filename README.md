@@ -12,6 +12,8 @@ It allows to application configuration values to be resloved and formatted with 
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
+# Version: 6.4.x
+- Big configuration perfomance improvement
 # Version: 6.3.x
 **.Net Core App support**
 - Supports: **net 6.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
