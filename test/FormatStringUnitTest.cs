@@ -75,7 +75,6 @@ namespace DotNetCore.Configuration.Formatter.Test
         [InlineData("{KeyDefault??}", "")]
         [InlineData("{KeyDefault????}", "")]
         [InlineData("{KeyDefault??KeyDefault??KeyDefault????}", "KeyDefault")]
-        [InlineData("{KeyDefault????}", "")]
         [InlineData("{KeyDefault??KeyDefault??null}", "KeyDefault")]
         [InlineData("{Key1??}", "Value1")]
         [InlineData("{Key1??null}", "Value1")]

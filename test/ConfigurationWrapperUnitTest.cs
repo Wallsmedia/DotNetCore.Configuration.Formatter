@@ -1,7 +1,7 @@
 //   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2022. All rights reserved.
+// Copyright (c) i-Wallsmedia 2023. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -121,6 +121,46 @@ namespace DotNetCore.Configuration.Formatter.Test
                 .Get<ConfigurationAppExample>();
 
             // Assert
+            Assert.Equal(configuration["secret:sql-service"], configExample.Password);
+            Assert.Equal("protocol://sql-dev-data-", configExample.ConnectionUrl);
+            Assert.Equal("sql-dev-example-login", configExample.Name);
+            Assert.Equal(string.Empty, configExample.EmptyString);
+            Assert.Equal("{secret:notfound}", configExample.NotFound);
+
+        }
+
+        [Fact]
+        public void ConfigurationWrapperRootOnlyKeysHash()
+        {
+            // Arrange
+            // simulate add into configuration key values
+            configuration["protocol"] = "protocol";
+            configuration["app-env"] = "dev";
+            configuration["secret:sql-service"] = "PASSWORD";
+            configuration["secret:empty-string"] = "";
+            // get wrapper
+            var configurationWrapper = configuration.UseFormater();
+
+            Assert.Null(((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys);
+
+            // Act
+
+            var configExample = configurationWrapper
+                .GetSection(nameof(ConfigurationAppExample))
+                .Get<ConfigurationAppExample>();
+
+            Assert.Equal(9, ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys.Count);
+
+            var hashE = ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys;
+            configExample = configurationWrapper
+                .GetSection(nameof(ConfigurationAppExample))
+                .Get<ConfigurationAppExample>();
+
+            var hashT = ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys;
+            Assert.Equal(9, ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys.Count);
+
+            // Assert
+            Assert.Equal((object)hashE, (object)hashT);
             Assert.Equal(configuration["secret:sql-service"], configExample.Password);
             Assert.Equal("protocol://sql-dev-data-", configExample.ConnectionUrl);
             Assert.Equal("sql-dev-example-login", configExample.Name);
