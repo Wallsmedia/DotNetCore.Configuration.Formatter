@@ -1,7 +1,7 @@
 ﻿//   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2022. All rights reserved.
+// Copyright (c) i-Wallsmedia 2023. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -19,7 +19,9 @@ namespace Microsoft.Extensions.Configuration
     {
 
         private readonly IConfigurationSection _section;
-        private readonly IConfiguration _root;
+        public IConfiguration Root { get; }
+        public ConfigurationFormatter ConfigurationFormatter { get; }
+
 
         /// <summary>
         /// Gets and sets the list of sections that used by a configuration formatter.
@@ -36,10 +38,11 @@ namespace Microsoft.Extensions.Configuration
         /// </summary>
         /// <param name="section">The configuration section to wrap with a formatter.</param>
         /// <param name="root">The configuration root.</param>
-        public ConfigurationSectionFormatter(IConfigurationSection section, IConfiguration root)
+        public ConfigurationSectionFormatter(IConfigurationSection section, IConfiguration root, ConfigurationFormatter configurationFormatter)
         {
             _section = section;
-            _root = root;
+            Root = root;
+            ConfigurationFormatter = configurationFormatter;
         }
 
         /// <summary>
@@ -53,7 +56,7 @@ namespace Microsoft.Extensions.Configuration
             get
             {
                 var val = _section[key];
-                return FormatterExtensions.FormatValue(val, KeyValues, SectionList, _root);
+                return FormatterExtensions.FormatValue(val, KeyValues, SectionList, Root, ConfigurationFormatter);
             }
             set => _section[key] = value;
         }
@@ -65,7 +68,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The configuration sub-sections.</returns>
         public IEnumerable<IConfigurationSection> GetChildren()
         {
-            return _section.GetChildren().Select(s => s.UseFormater(_root, SectionList, KeyValues));
+            return _section.GetChildren().Select(s => s.UseSectionFormater(Root, ConfigurationFormatter, SectionList, KeyValues));
         }
 
         /// <summary>
@@ -90,7 +93,7 @@ namespace Microsoft.Extensions.Configuration
         /// </remarks>
         public IConfigurationSection GetSection(string key)
         {
-            return _section.GetSection(key).UseFormater(_root, SectionList, KeyValues);
+            return _section.GetSection(key).UseSectionFormater(Root, ConfigurationFormatter, SectionList, KeyValues);
         }
 
         #region IConfigurationSection
@@ -111,7 +114,7 @@ namespace Microsoft.Extensions.Configuration
         /// </summary>
         public string Value
         {
-            get => FormatterExtensions.FormatValue(_section.Value, KeyValues, SectionList, _root);
+            get => FormatterExtensions.FormatValue(_section.Value, KeyValues, SectionList, Root, ConfigurationFormatter);
             set => _section.Value = value;
         }
 

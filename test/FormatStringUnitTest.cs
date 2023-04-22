@@ -14,7 +14,7 @@ namespace DotNetCore.Configuration.Formatter.Test
 {
     public class FormatStringUnitTest
     {
-        Dictionary<string, string> keyValuesTest;
+        readonly Dictionary<string, string> keyValuesTest;
 
         public FormatStringUnitTest()
         {
@@ -75,12 +75,14 @@ namespace DotNetCore.Configuration.Formatter.Test
         [InlineData("{KeyDefault??}", "")]
         [InlineData("{KeyDefault????}", "")]
         [InlineData("{KeyDefault??KeyDefault??KeyDefault????}", "KeyDefault")]
-        [InlineData("{KeyDefault????}", "")]
         [InlineData("{KeyDefault??KeyDefault??null}", "KeyDefault")]
         [InlineData("{Key1??}", "Value1")]
         [InlineData("{Key1??null}", "Value1")]
         [InlineData("{??Key1}", "Value1")]
         [InlineData("{KeyDefault??{KeyDefault??null}}", null)]
+        [InlineData("{KeyNotfound??{Key2}}", "Value2")]
+        [InlineData("{Key2??{KeyNotfound}}", "Value2")]
+        [InlineData("{KeyNotfound??{KeyNotfound}}", "?KeyNotfound?")]
 
         public void TestFormatStringDefaults(string source, string expected)
         {
@@ -107,7 +109,23 @@ namespace DotNetCore.Configuration.Formatter.Test
 
             // Assert
 
-            Assert.Equal((14, 17), result);
+            Assert.Equal((14, 17, false), result);
+        }
+
+        [Fact]
+        public void TestPairIndexesAlt()
+        {
+
+            // Arrange 
+
+            string test = "{super-{{toRep??{dd}lace1}-{Key4}}}";
+
+            // Act
+            var result = FormatterExtensions.PairIndexes(test, '{', '}');
+
+            // Assert
+
+            Assert.Equal((16, 19, true), result);
         }
     }
 }

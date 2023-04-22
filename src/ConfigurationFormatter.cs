@@ -1,7 +1,7 @@
 ﻿//   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2022. All rights reserved.
+// Copyright (c) i-Wallsmedia 2023. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -19,6 +19,8 @@ namespace Microsoft.Extensions.Configuration
     {
 
         private readonly IConfiguration _configuration;
+
+        public HashSet<string> ConfigurationHashKeys { get; set; }
 
         /// <summary>
         /// Gets and sets the list of sections that used by a configuration formatter.
@@ -47,7 +49,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The configuration value.</returns>
         public string this[string key]
         {
-            get => _configuration.FormatKeyValue(key, SectionList, KeyValues);
+            get => _configuration.FormatKeyValue(key, SectionList, KeyValues, this);
             set => _configuration[key] = value;
         }
 
@@ -58,7 +60,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The configuration sub-sections.</returns>
         public IEnumerable<IConfigurationSection> GetChildren()
         {
-            return _configuration.GetChildren().Select(s => s.UseFormater(_configuration, SectionList, KeyValues));
+            return _configuration.GetChildren().Select(s => s.UseSectionFormater(_configuration, this, SectionList, KeyValues));
         }
 
         /// <summary>
@@ -83,7 +85,7 @@ namespace Microsoft.Extensions.Configuration
         /// </remarks>
         public IConfigurationSection GetSection(string key)
         {
-            return _configuration.GetSection(key).UseFormater(_configuration, SectionList, KeyValues);
+            return _configuration.GetSection(key).UseSectionFormater(_configuration, this, SectionList, KeyValues);
         }
     }
 }

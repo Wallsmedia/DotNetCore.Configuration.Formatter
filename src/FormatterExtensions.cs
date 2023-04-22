@@ -39,7 +39,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The formatted string.</returns>
         public static string FormatString(this string value, Dictionary<string, string> keyValues)
         {
-            return FormatValue(value, keyValues, null, null);
+            return FormatValue(value, keyValues, null, null, null);
         }
 
 
@@ -107,9 +107,9 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="sectionSearchList">The list of sections for key search.</param>
         /// <param name="keyValueMap">The key to value map used for formating.</param>
         /// <returns>The wrapped configuration section.</returns>
-        public static ConfigurationSectionFormatter UseFormater(this IConfigurationSection configurationSection, IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+        public static ConfigurationSectionFormatter UseSectionFormater(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
         {
-            return new ConfigurationSectionFormatter(configurationSection, configuration) { SectionList = sectionSearchList, KeyValues = keyValueMap };
+            return new ConfigurationSectionFormatter(configurationSection, configuration, configurationFormatter) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
 
         /// <summary>
@@ -125,10 +125,10 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="sectionSearchList">The list of sections for key search.</param>
         /// <param name="keyValueMap">The map foe mapping keys before resolving.</param>
         /// <returns>The wrapped configuration section.</returns>
-        public static string FormatKeyValue(this IConfiguration configuration, string key, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+        public static string FormatKeyValue(this IConfiguration configuration, string key, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null, ConfigurationFormatter configurationFormatter = null)
         {
             var value = configuration[key];
-            return FormatValue(value, keyValueMap, sectionSearchList, configuration);
+            return FormatValue(value, keyValueMap, sectionSearchList, configuration, configurationFormatter);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="sectionSearchList">The list of sections for key search.</param>
         /// <param name="keyValueMap">The key to value map used for formating.</param>
         /// <returns>The wrapped configuration section.</returns>
-        public static string FormatValue(string value, Dictionary<string, string> keyValueMap, List<string> sectionSearchList = null, IConfiguration configuration = null)
+        public static string FormatValue(string value, Dictionary<string, string> keyValueMap, List<string> sectionSearchList = null, IConfiguration configuration = null, ConfigurationFormatter configurationFormatter = null)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -158,7 +158,8 @@ namespace Microsoft.Extensions.Configuration
             {
                 int openBraceIndex;
                 int closeBraceIndex;
-                (openBraceIndex, closeBraceIndex) = PairIndexes(value, '{', '}');
+                bool altValue;
+                (openBraceIndex, closeBraceIndex, altValue) = PairIndexes(value, '{', '}');
 
                 if (openBraceIndex == 0 && closeBraceIndex == 0)
                 {
@@ -186,7 +187,7 @@ namespace Microsoft.Extensions.Configuration
                     encodeKeyName = valueKeyName;
                 }
 
-                var kevalue = KeyValue(encodeKeyName, keyValueMap, sectionSearchList, configuration);
+                var kevalue = KeyValue(encodeKeyName, keyValueMap, sectionSearchList, configuration, configurationFormatter);
 
                 if (kevalue != null)
                 {
@@ -206,11 +207,20 @@ namespace Microsoft.Extensions.Configuration
                 }
                 else
                 {
-                    // not found 
-                    sb.Append('{');
-                    sb.Append(valueKeyName);
-                    sb.Append('}');
-                    complete = true;
+                    if (altValue)
+                    {
+                        sb.Append('?');
+                        sb.Append(valueKeyName);
+                        sb.Append('?');
+                    }
+                    else
+                    {
+                        // not found 
+                        sb.Append('{');
+                        sb.Append(valueKeyName);
+                        sb.Append('}');
+                        complete = true;
+                    }
                 }
                 if (closeBraceIndex + 1 < value.Length)
                 {
@@ -238,7 +248,7 @@ namespace Microsoft.Extensions.Configuration
         public static bool ResolveKeyValue(this IConfiguration configuration, string key)
         {
             var oldValue = configuration[key];
-            var newValue = FormatValue(oldValue, null, null, configuration);
+            var newValue = FormatValue(oldValue, null, null, configuration, null);
             configuration[key] = newValue;
             newValue = configuration[key];
             return oldValue != newValue;
@@ -261,7 +271,7 @@ namespace Microsoft.Extensions.Configuration
                     var oldValue = configuration[key];
                     if (oldValue != null && oldValue.IndexOf('{') != -1)
                     {
-                        configuration[key] = FormatValue(oldValue, null, null, configuration);
+                        configuration[key] = FormatValue(oldValue, null, null, configuration, null);
                     }
                 }
                 return true;
@@ -274,7 +284,7 @@ namespace Microsoft.Extensions.Configuration
         /// </summary>
         /// <param name="root">The root configuration instance.</param>
         /// <returns>List of all keys.</returns>
-        public static List<string> AllConfigurationKeys(this IConfigurationRoot root)
+        public static List<string> AllConfigurationKeys(this IConfigurationRoot root, ConfigurationFormatter configurationFormatter = null)
         {
             (string Value, IConfigurationProvider Provider) GetValueAndProvider(IConfigurationRoot rootF, string key)
             {
@@ -307,7 +317,25 @@ namespace Microsoft.Extensions.Configuration
                     RecurseChildren(keysF, child.GetChildren(), child.Path);
                 }
             }
-            var keys = new HashSet<string>();
+
+            HashSet<string> keys;
+            if (configurationFormatter != null)
+            {
+                keys = configurationFormatter.ConfigurationHashKeys ?? new HashSet<string>();
+                if (configurationFormatter.ConfigurationHashKeys == null)
+                {
+                    configurationFormatter.ConfigurationHashKeys = keys;
+                }
+                else
+                {
+                    return keys.ToList();
+                }
+            }
+            else
+            {
+                keys = new HashSet<string>();
+            }
+
             RecurseChildren(keys, root.GetChildren(), "");
             return keys.ToList();
         }
@@ -318,13 +346,13 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="root">The root configuration instance.</param>
         /// <param name="complexKey">The probed key.</param>
         /// <returns>Returns true if it exist.</returns>
-        public static bool ContainsComplexKey(this IConfigurationRoot root, string complexKey)
+        public static bool ContainsComplexKey(this IConfigurationRoot root, string complexKey, ConfigurationFormatter configurationFormatter)
         {
-            var list = root.AllConfigurationKeys();
+            var list = root.AllConfigurationKeys(configurationFormatter);
             return list.Any(k => k.ToLower() == complexKey.ToLower());
         }
 
-        private static string KeyValue(string keyName, Dictionary<string, string> keyValueMap, List<string> sectionList = null, IConfiguration configuration = null)
+        private static string KeyValue(string keyName, Dictionary<string, string> keyValueMap, List<string> sectionList = null, IConfiguration configuration = null, ConfigurationFormatter configurationFormatter = null)
         {
             //
             // Order of resolution
@@ -358,7 +386,7 @@ namespace Microsoft.Extensions.Configuration
                 result = configuration[keyName];
                 if (result == null && configuration as IConfigurationRoot != null)
                 {
-                    if (((IConfigurationRoot)configuration).ContainsComplexKey(keyName))
+                    if (((IConfigurationRoot)configuration).ContainsComplexKey(keyName, configurationFormatter))
                     {
                         result = string.Empty;
                     }
@@ -368,7 +396,7 @@ namespace Microsoft.Extensions.Configuration
             return result;
         }
 
-        public static (int, int) PairIndexes(string format, char left, char right)
+        public static (int open, int close, bool altValue) PairIndexes(string format, char left, char right)
         {
             Stack<int> open = new Stack<int>();
             for (int i = 0; i < format.Length; i++)
@@ -384,10 +412,12 @@ namespace Microsoft.Extensions.Configuration
                     {
                         break;
                     }
-                    return (open.Pop(), i);
+                    var openInd = open.Pop();
+                    bool altValue = (openInd >= 2) && (format[openInd - 1] == '?') && (format[openInd - 2] == '?');
+                    return (openInd, i, altValue);
                 }
             }
-            return (0, 0);
+            return (0, 0, false);
         }
     }
 }
