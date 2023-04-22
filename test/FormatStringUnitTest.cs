@@ -1,7 +1,7 @@
 //   \\      /\  /\\
 //  o \\ \  //\\// \\
 //  |  \//\//       \\
-// Copyright (c) i-Wallsmedia 2022. All rights reserved.
+// Copyright (c) i-Wallsmedia 2023. All rights reserved.
 
 // Licensed to the .NET Foundation under one or more agreements.
 // See the LICENSE file in the project root for more information.
@@ -50,9 +50,13 @@ namespace DotNetCore.Configuration.Formatter.Test
         [InlineData("{Key}{Key4}_tail", "{Key}{Key4}_tail")]
         [InlineData("{Key}{Key4}", "{Key}{Key4}")]
         [InlineData("{Key}-{Key4}", "{Key}-{Key4}")]
-        [InlineData("{KeyMe??defaulVal}-{Key4ME??defaulVal}", "defaulVal-defaulVal")]
         [InlineData("{super-{Key1}-{Key4}}", "SuperReplace")]
-        [InlineData("{KeyMe??}", "")]
+        [InlineData("{KeyMe??defaulVal}-{Key4ME??defaulVal}", "defaulVal-defaulVal")]
+        [InlineData("{KeyDefault??}", "")]
+        [InlineData("{KeyDefault??null}", null)]
+        [InlineData("{Key1??}", "Value1")]
+        [InlineData("{Key1??null}", "Value1")]
+        [InlineData("{??Key1}", "Value1")]
 
         public void TestFormatString(string source, string expected)
         {
