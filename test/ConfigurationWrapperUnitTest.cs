@@ -18,6 +18,8 @@ namespace DotNetCore.Configuration.Formatter.Test
         public string Password { get; set; }
         public string EmptyString { get; set; }
         public string NotFound { get; set; }
+        public string NotFoundAlt { get; set; }
+        public string NotFoundRev { get; set; }
     }
 
     public class ConfigurationWrapperUnitTest
@@ -31,7 +33,9 @@ namespace DotNetCore.Configuration.Formatter.Test
     ""Name"": ""sql-{app-env}-example-login"",
     ""Password"": ""{secret:sql-service}"",
     ""EmptyString"": ""{secret:empty-string}"",
-    ""NotFound"": ""{secret:notfound}""
+    ""NotFound"": ""{secret:notfound}"",
+    ""NotFoundAlt"": ""{secret:notfound??{app-env}}"",
+    ""NotFoundRev"": ""{app-env??{secret:notfound}}""
   }
 
 }
@@ -56,7 +60,7 @@ namespace DotNetCore.Configuration.Formatter.Test
 
 
             // Assert
-            Assert.Equal(7, keys.Count);
+            Assert.Equal(9, keys.Count);
             Assert.True(keys.Contains("UseDevelopmentStorage"));
 
         }
@@ -101,6 +105,8 @@ namespace DotNetCore.Configuration.Formatter.Test
             Assert.Equal("sql-dev-example-login", configExample.Name);
             Assert.Equal(string.Empty, configExample.EmptyString);
             Assert.Equal("{secret:notfound}", configExample.NotFound);
+            Assert.Equal("dev", configExample.NotFoundAlt);
+            Assert.Equal("dev", configExample.NotFoundRev);
         }
 
         [Fact]
@@ -149,7 +155,7 @@ namespace DotNetCore.Configuration.Formatter.Test
                 .GetSection(nameof(ConfigurationAppExample))
                 .Get<ConfigurationAppExample>();
 
-            Assert.Equal(9, ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys.Count);
+            Assert.Equal(11, ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys.Count);
 
             var hashE = ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys;
             configExample = configurationWrapper
@@ -157,7 +163,7 @@ namespace DotNetCore.Configuration.Formatter.Test
                 .Get<ConfigurationAppExample>();
 
             var hashT = ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys;
-            Assert.Equal(9, ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys.Count);
+            Assert.Equal(11, ((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys.Count);
 
             // Assert
             Assert.Equal((object)hashE, (object)hashT);

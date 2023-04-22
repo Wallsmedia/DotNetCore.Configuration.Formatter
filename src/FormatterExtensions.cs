@@ -158,7 +158,8 @@ namespace Microsoft.Extensions.Configuration
             {
                 int openBraceIndex;
                 int closeBraceIndex;
-                (openBraceIndex, closeBraceIndex) = PairIndexes(value, '{', '}');
+                bool altValue;
+                (openBraceIndex, closeBraceIndex, altValue) = PairIndexes(value, '{', '}');
 
                 if (openBraceIndex == 0 && closeBraceIndex == 0)
                 {
@@ -206,11 +207,20 @@ namespace Microsoft.Extensions.Configuration
                 }
                 else
                 {
-                    // not found 
-                    sb.Append('{');
-                    sb.Append(valueKeyName);
-                    sb.Append('}');
-                    complete = true;
+                    if (altValue)
+                    {
+                        sb.Append('?');
+                        sb.Append(valueKeyName);
+                        sb.Append('?');
+                    }
+                    else
+                    {
+                        // not found 
+                        sb.Append('{');
+                        sb.Append(valueKeyName);
+                        sb.Append('}');
+                        complete = true;
+                    }
                 }
                 if (closeBraceIndex + 1 < value.Length)
                 {
@@ -274,7 +284,7 @@ namespace Microsoft.Extensions.Configuration
         /// </summary>
         /// <param name="root">The root configuration instance.</param>
         /// <returns>List of all keys.</returns>
-        public static List<string> AllConfigurationKeys(this IConfigurationRoot root, ConfigurationFormatter configurationFormatter = null  )
+        public static List<string> AllConfigurationKeys(this IConfigurationRoot root, ConfigurationFormatter configurationFormatter = null)
         {
             (string Value, IConfigurationProvider Provider) GetValueAndProvider(IConfigurationRoot rootF, string key)
             {
@@ -386,7 +396,7 @@ namespace Microsoft.Extensions.Configuration
             return result;
         }
 
-        public static (int, int) PairIndexes(string format, char left, char right)
+        public static (int open, int close, bool altValue) PairIndexes(string format, char left, char right)
         {
             Stack<int> open = new Stack<int>();
             for (int i = 0; i < format.Length; i++)
@@ -402,10 +412,12 @@ namespace Microsoft.Extensions.Configuration
                     {
                         break;
                     }
-                    return (open.Pop(), i);
+                    var openInd = open.Pop();
+                    bool altValue = (openInd >= 2) && (format[openInd - 1] == '?') && (format[openInd - 2] == '?');
+                    return (openInd, i, altValue);
                 }
             }
-            return (0, 0);
+            return (0, 0, false);
         }
     }
 }
