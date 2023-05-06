@@ -10,12 +10,14 @@ using System.Text;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Microsoft.Extensions.Configuration
 {
 
     /// <summary>
-    /// Formatter to substitutes the named format items like {NamedformatItem} format  with values from IConfiguration or dictionary.
+    /// Formatter to substitutes the named format items like {KeyName} format  with values from IConfiguration or dictionary.
     /// </summary>
     public static class FormatterExtensions
     {
@@ -33,7 +35,7 @@ namespace Microsoft.Extensions.Configuration
         ///     var format = "Get the {Key-1} and complex: {Key-{Key-1}} and {none??Default}";
         ///     var formatted = format.FormatString(keyValues);
         /// 
-        ///    Formated string will be 
+        ///    Formatted string will be 
         ///        "Get the Value-1 and complex: Complex-Value-1 and Default"
         /// </example>
         /// <returns>The formatted string.</returns>
@@ -79,7 +81,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The new instance if successful, null otherwise.</returns>
         public static object GetFormatted(this IConfiguration configuration, Type type, string section)
         {
-            var wrapped = configuration.UseFormater();
+            var wrapped = configuration.UseFormatter();
             if (section != null)
             {
                 return wrapped.GetSection(section).Get(type);
@@ -92,9 +94,19 @@ namespace Microsoft.Extensions.Configuration
         /// </summary>
         /// <param name="configuration">The configuration instance.</param>
         /// <param name="sectionSearchList">The list of sections for key search.</param>
-        /// <param name="keyValueMap">The key to value map used for formating.</param>
+        /// <param name="keyValueMap">The key to value map used for formatting.</param>
         /// <returns>The wrapped configuration.</returns>
+        public static ConfigurationFormatter UseFormatter(this IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+        {
+            return new ConfigurationFormatter(configuration) { SectionList = sectionSearchList, KeyValues = keyValueMap };
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        [Obsolete("Use  'UseFormatter'")]
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static ConfigurationFormatter UseFormater(this IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         {
             return new ConfigurationFormatter(configuration) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
@@ -105,9 +117,19 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="configurationSection">The configuration section instance.</param>
         /// <param name="configuration">The configuration instance.</param>
         /// <param name="sectionSearchList">The list of sections for key search.</param>
-        /// <param name="keyValueMap">The key to value map used for formating.</param>
+        /// <param name="keyValueMap">The key to value map used for formatting.</param>
         /// <returns>The wrapped configuration section.</returns>
+        public static ConfigurationSectionFormatter UseSectionFormatter(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+        {
+            return new ConfigurationSectionFormatter(configurationSection, configuration, configurationFormatter) { SectionList = sectionSearchList, KeyValues = keyValueMap };
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        [Obsolete("Use  'UseSectionFormatter'")]
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static ConfigurationSectionFormatter UseSectionFormater(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         {
             return new ConfigurationSectionFormatter(configurationSection, configuration, configurationFormatter) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
@@ -142,7 +164,7 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="value">The string to format.</param>
         /// <param name="configuration">The configuration instance.</param>
         /// <param name="sectionSearchList">The list of sections for key search.</param>
-        /// <param name="keyValueMap">The key to value map used for formating.</param>
+        /// <param name="keyValueMap">The key to value map used for formatting.</param>
         /// <returns>The wrapped configuration section.</returns>
         public static string FormatValue(string value, Dictionary<string, string> keyValueMap, List<string> sectionSearchList = null, IConfiguration configuration = null, ConfigurationFormatter configurationFormatter = null)
         {
@@ -262,8 +284,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>True if keys values have might been changed.</returns>
         public static bool ResolveAllKeyValues(this IConfiguration configuration)
         {
-            var rootConfiguration = configuration as IConfigurationRoot;
-            if (rootConfiguration != null)
+            if (configuration is IConfigurationRoot rootConfiguration)
             {
                 var keys = rootConfiguration.AllConfigurationKeys();
                 foreach (var key in keys)
@@ -302,8 +323,8 @@ namespace Microsoft.Extensions.Configuration
             {
                 foreach (IConfigurationSection child in children)
                 {
-                    (string Value, IConfigurationProvider Provider) valueAndProvider = GetValueAndProvider(root, child.Path);
-                    if (valueAndProvider.Provider != null)
+                    (string Value, IConfigurationProvider Provider) = GetValueAndProvider(root, child.Path);
+                    if (Provider != null)
                     {
                         if (string.IsNullOrEmpty(rootPath))
                         {

@@ -119,7 +119,7 @@ namespace DotNetCore.Configuration.Formatter.Test
             configuration["secret:sql-service"] = "PASSWORD";
             configuration["secret:empty-string"] = "";
             // get wrapper
-            var configurationWrapper = configuration.UseFormater();
+            var configurationWrapper = configuration.UseFormatter();
 
             // Act
             var configExample = configurationWrapper
@@ -145,7 +145,7 @@ namespace DotNetCore.Configuration.Formatter.Test
             configuration["secret:sql-service"] = "PASSWORD";
             configuration["secret:empty-string"] = "";
             // get wrapper
-            var configurationWrapper = configuration.UseFormater();
+            var configurationWrapper = configuration.UseFormatter();
 
             Assert.Null(((ConfigurationFormatter)configurationWrapper).ConfigurationHashKeys);
 
