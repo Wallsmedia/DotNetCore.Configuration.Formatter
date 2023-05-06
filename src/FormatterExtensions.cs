@@ -127,9 +127,7 @@ namespace Microsoft.Extensions.Configuration
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         [Obsolete("Use  'UseSectionFormatter'")]
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static ConfigurationSectionFormatter UseSectionFormater(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         {
             return new ConfigurationSectionFormatter(configurationSection, configuration, configurationFormatter) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
