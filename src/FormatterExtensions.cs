@@ -81,7 +81,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The new instance if successful, null otherwise.</returns>
         public static object GetFormatted(this IConfiguration configuration, Type type, string section)
         {
-            var wrapped = configuration.UseFormatter();
+            var wrapped = configuration.ApplyConfigurationFormatter();
             if (section != null)
             {
                 return wrapped.GetSection(section).Get(type);
@@ -96,14 +96,14 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="sectionSearchList">The list of sections for key search.</param>
         /// <param name="keyValueMap">The key to value map used for formatting.</param>
         /// <returns>The wrapped configuration.</returns>
-        public static ConfigurationFormatter UseFormatter(this IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+        public static ConfigurationFormatter ApplyConfigurationFormatter(this IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
         {
             return new ConfigurationFormatter(configuration) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [Obsolete("Use  'UseFormatter'")]
+        [Obsolete("Use  'ApplyConfigurationFormatter'")]
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static ConfigurationFormatter UseFormater(this IConfiguration configuration, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
@@ -119,14 +119,14 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="sectionSearchList">The list of sections for key search.</param>
         /// <param name="keyValueMap">The key to value map used for formatting.</param>
         /// <returns>The wrapped configuration section.</returns>
-        public static ConfigurationSectionFormatter UseSectionFormatter(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
+        public static ConfigurationSectionFormatter ApplyConfigurationFormatter(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
         {
             return new ConfigurationSectionFormatter(configurationSection, configuration, configurationFormatter) { SectionList = sectionSearchList, KeyValues = keyValueMap };
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [Obsolete("Use  'UseSectionFormatter'")]
+        [Obsolete("Use  'ApplyConfigurationFormatter'")]
         public static ConfigurationSectionFormatter UseSectionFormater(this IConfigurationSection configurationSection, IConfiguration configuration, ConfigurationFormatter configurationFormatter, List<string> sectionSearchList = null, Dictionary<string, string> keyValueMap = null)
         {
             return new ConfigurationSectionFormatter(configurationSection, configuration, configurationFormatter) { SectionList = sectionSearchList, KeyValues = keyValueMap };

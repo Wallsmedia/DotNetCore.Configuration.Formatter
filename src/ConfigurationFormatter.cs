@@ -60,7 +60,7 @@ namespace Microsoft.Extensions.Configuration
         /// <returns>The configuration sub-sections.</returns>
         public IEnumerable<IConfigurationSection> GetChildren()
         {
-            return _configuration.GetChildren().Select(s => s.UseSectionFormatter(_configuration, this, SectionList, KeyValues));
+            return _configuration.GetChildren().Select(s => s.ApplyConfigurationFormatter(_configuration, this, SectionList, KeyValues));
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Microsoft.Extensions.Configuration
         /// </remarks>
         public IConfigurationSection GetSection(string key)
         {
-            return _configuration.GetSection(key).UseSectionFormatter(_configuration, this, SectionList, KeyValues);
+            return _configuration.GetSection(key).ApplyConfigurationFormatter(_configuration, this, SectionList, KeyValues);
         }
     }
 }

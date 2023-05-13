@@ -19,19 +19,19 @@ It allows to application configuration values to be resloved and formatted with 
 # Version: 7.1.x
 **.Net Core App support**
 - Supports: **net 7.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
-- Azure Function Support
-  - **ResolveKeyValue**
-  - **ResolveAllKeyValues**
-  - **AllConfigurationKeys**
-  - **\{Key??}** feature
-  - **\{Key??null}** feature
+- Azure Function Support via **ResolveAllKeyValues**
+- **ResolveKeyValue** - Format/resolve a key reference value and replace it in the configuration. 
+- **ResolveAllKeyValues** - Format/resolve all key reference values and replace them in the configuration. 
+- **AllConfigurationKeys** - Get all keys from the configuration.
+- **\{Key??}** - empty string feature.
+- **\{Key??null}** - null feature. 
 
 ## Annotation format syntax
 
 |  Annotation   | Definition  |
 -----------------------------------------------   | ---  |
  **\{ Key }**  |  If the **Key**  reference will be resolved; it will be replaced with a **value**. If **\{Key}** is not found, it will not be replaced and recursive references substitution will be cancelled,i.e JSON frendly.
- **\{{{Key3}Key2}Key1}**   |  Supports recursive references substitution, it will be replaced with a final constructed reference **value**.
+ **\{{{Key3}Key2}Key1}**   |  Supports complex and multiply recursive references substitution, it will be replaced with a final constructed reference **value**.
  **\{Key??DefaultValue}**   | If the **Key** reference will not be resolved in it will be replaced with the **Default**.
  **\{Key??\{DefaultKey}}** | If the **Key** reference will not be resolved in it will be replaced with the **DefaultKey** value.
   **\{Key??}**   | If the **Key** reference will not be resolved in it will be replaced with the **string.Empty**.
@@ -39,51 +39,16 @@ It allows to application configuration values to be resloved and formatted with 
   
 
 
-## Azure Key Vault Integration 
+## Azure Integration 
 
-Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Secrets](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvSecrets).
-Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Certificates](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvCertificates)
+- Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Secrets](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvSecrets).
+- Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Certificates](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvCertificates)
 
 ## How to use
 
+Example of using 
 
-
-
-For example you have the following:
-
-##### Environment Variables set to :
-
-```
-DOTNET_RUNNING_IN_CONTAINER=true
-...
-host_environmet=datacenter
-```
-
-##### Secret KeyValaut Configuration Provider loads the following secrets:
-[DotNetCore.Azure.Configuration.KvSecrets](https://www.nuget.org/packages/DotNetCore.Azure.Configuration.KvSecrets)
-
-
-```
-"secret:BusConnection":"... azure bus endpoint ... ... "
-"secret:DbConnection":"... sql connection string ... ... "
-"secret:CosmosDbConnection":"... mongo db connection string ... ... "
-```
-
-##### Web Service has the following appsettings.json:
-
-``` JSON 
-{
-  ApplicationConfiguration:{
-     "IsDocker": "{DOTNET_RUNNING_IN_CONTAINER??false}",
-     "RunLocation":"{host_environmet??local}"
-     "BusConnection":"{secret:BusConnection}"
-     "DbConnection":"{secret:DbConnection}",
-     "CosmosDbConnection":"{secret:CosmosDbConnection}"
-  }
-}
-```
-
-##### Web Service has the ApplicationConfiguration.cs
+### Define the ApplicationConfiguration.cs:
 
 ``` CSharp
 
@@ -97,12 +62,51 @@ public class ApplicationConfiguration
 }
 ```
 
-##### Web Service has the Startup.cs
+
+### Define the following appsettings.json:
+
+``` JSON 
+{
+  ApplicationConfiguration:{
+     "IsDocker": "{DOTNET_RUNNING_IN_CONTAINER??false}",
+     "RunLocation":"{host_env??local}"
+     "BusConnection":"{secret:{host_env}:BusConnection}"
+     "DbConnection":"{secret:{host_env}:DbConnection}",
+     "CosmosDbConnection":"{secret:{host_env}:CosmosDbConnection}"
+  }
+}
+```
+
+
+
+### Environment Variables to :
+
+```
+DOTNET_RUNNING_IN_CONTAINER=true
+...
+host_env=dev
+```
+
+### Define in the Secret file or User secrets or [DotNetCore.Azure.Configuration.KvSecrets](https://www.nuget.org/packages/DotNetCore.Azure.Configuration.KvSecrets)...
+
+```
+{
+    "secret:dev:BusConnection":"... azure bus endpoint ... ... "
+    "secret:dev:DbConnection":"... sql connection string ... ... "
+    "secret:dev:CosmosDbConnection":"... mongo db connection string ... ... "
+
+    "secret:uat:BusConnection":"... azure bus endpoint ... ... "
+    "secret:uat:DbConnection":"... sql connection string ... ... "
+    "secret:uat:CosmosDbConnection":"... mongo db connection string ... ... "
+}
+```
+
+### In the Startup.cs
 
 
 ``` CSharp
 
-     var applicationConfig = Configuration.UseFormater()
+     var applicationConfig = Configuration.ApplyConfigurationFormatter()
      .GetSection(nameof(ApplicationConfiguration))
      .Get<ApplicationConfiguration>();
   ```
@@ -117,7 +121,7 @@ or with **shorthand**
 
 The Web Service will be provided with filly resolved configuration with Azure Key Vault secrets. 
 
-##### Azure Function Support
+## Azure Function Support
 
 Some software used a dynamic IConfiguration in the code. In this case  "DotNetCore Configuration Templates" doesn't work.
 For example it is Azure Functions. There added a special feature **ResolveKeyValue**.
@@ -133,22 +137,5 @@ Resolve all keys in a configuration.
 ``` CSharp
     var configuration = ... // Get IConfiguration
     var isUpdated = configuration.ResolveAllKeyValues();
-```
-
-## Dot Net Core
-
-##### Example for a string formatting:
-
-``` C#
- var keyValues = new Dictionary<string, string>()
- {
-     ["Key-1"] = "Value-1",
-     ["Key-Value-1"] = "Complex-Value-1"
- };
- var format = "Get the {Key-1} and complex: {Key-{Key-1}} and {none??Default} and {NotFound}";
- var formatted = format.FormatString(keyValues);
-
-Formated string will be 
-    "Get the Value-1 and complex: Complex-Value-1 and Default {NotFound}"
 ```
 
