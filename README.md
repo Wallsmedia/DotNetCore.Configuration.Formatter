@@ -1,24 +1,21 @@
-## DotNetCore Configuration Templates 
+## DotNetCore Generic Configuration
 
-**DotNetCore.Configuration.Formatter** is a simple Configuration ASP.NET Core Templates for
-[**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0).
-It is used [**Configuration Providers**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#configuration-providers)
-for generating configuration value text output by substituting Configuration **Key** with its **Value**.
+**DotNetCore.Configuration.Formatter** creates a new configuration values by substituting IConfiguration Keys with Values from other IConfiguration Keys.
 
-Annotations '**\{...\}**' in the template refer to elements of the configuration data structure.
-It allows to application configuration values to be resloved and formatted with using key values of other configuration sections and providers.
+It is used in addtion to [**Microsoft.Extensions.Configuration**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0)
+for providing generic configuration values based on simple "annotation format".
+
+Annotations '**\{...\}**' in the **value** refer to other key elements in the IConfiguration data structure.
+It allows to application configuration values to be resloved (renderd) with using key values of other configuration sections and configuration providers.
 
 ### Nuget.org
 
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
-# Version: 7.2.x
-- Add **\{Key??\{DefaultKey}}** full support
-- Big configuration perfomance improvement
 
-# Version: 7.1.x
+# Version: 8.0.x
 **.Net Core App support**
-- Supports: **net 7.0**,  **net48**, **netstandard2.0**, **netstandard2.1**
+- Supports: **net 8.0**, **netstandard2.0**, **netstandard2.1**
 - Azure Function Support via **ResolveAllKeyValues**
 - **ResolveKeyValue** - Format/resolve a key reference value and replace it in the configuration. 
 - **ResolveAllKeyValues** - Format/resolve all key reference values and replace them in the configuration. 
@@ -39,16 +36,9 @@ It allows to application configuration values to be resloved and formatted with 
   
 
 
-## Azure Integration 
+## How to use 
 
-- Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Secrets](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvSecrets).
-- Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Certificates](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvCertificates)
-
-## How to use
-
-Example of using 
-
-### Define the ApplicationConfiguration.cs:
+### Lets define the ApplicationConfiguration class:
 
 ``` CSharp
 
@@ -62,35 +52,34 @@ public class ApplicationConfiguration
 }
 ```
 
+### Lets define the typical use cases:
+ - We want that all values will have deffernt settings for different environments;
+ - Environment will be defined by external environment variable 
+     - host_env = [dev|uat...] with default value **loc**
 
-### Define the following appsettings.json:
+### Define the generic appsettings.json:
 
 ``` JSON 
 {
   ApplicationConfiguration:{
      "IsDocker": "{DOTNET_RUNNING_IN_CONTAINER??false}",
-     "RunLocation":"{host_env??local}"
-     "BusConnection":"{secret:{host_env}:BusConnection}"
-     "DbConnection":"{secret:{host_env}:DbConnection}",
-     "CosmosDbConnection":"{secret:{host_env}:CosmosDbConnection}"
+     "RunLocation":"{host_env??loc}"
+     "BusConnection":"{secret:{host_env??loc}:BusConnection}"
+     "DbConnection":"{secret:{host_env??loc}:DbConnection}",
+     "CosmosDbConnection":"{secret:{host_env??loc}:CosmosDbConnection}"
   }
 }
 ```
 
+### Define the secrets.json file, or use [DotNetCore.Azure.Configuration.KvSecrets](https://www.nuget.org/packages/DotNetCore.Azure.Configuration.KvSecrets), or write own secret configuration provider.
 
-
-### Environment Variables to :
-
-```
-DOTNET_RUNNING_IN_CONTAINER=true
-...
-host_env=dev
-```
-
-### Define in the Secret file or User secrets or [DotNetCore.Azure.Configuration.KvSecrets](https://www.nuget.org/packages/DotNetCore.Azure.Configuration.KvSecrets)...
-
-```
+Where you define you secrets
+``` JSON
 {
+    "secret:loc:BusConnection":"... azure bus endpoint ... ... "
+    "secret:loc:DbConnection":"... sql connection string ... ... "
+    "secret:loc:CosmosDbConnection":"... mongo db connection string ... ... "
+
     "secret:dev:BusConnection":"... azure bus endpoint ... ... "
     "secret:dev:DbConnection":"... sql connection string ... ... "
     "secret:dev:CosmosDbConnection":"... mongo db connection string ... ... "
@@ -101,25 +90,40 @@ host_env=dev
 }
 ```
 
-### In the Startup.cs
+### In the Program.cs
 
+Add you secrets into Configuration  
 
 ``` CSharp
+  // Adds secrets.json.
+  builder.Configuration.AddJsonFile("secrets.json");
 
-     var applicationConfig = Configuration.ApplyConfigurationFormatter()
+  // Or;
+  // Adds Azure Key Valt configuration provider.
+  builder.Configuration.AddAzureKeyVault(....);
+
+  // Or;
+  // Adds your own configuration provider.
+  builder.Configuration.AddMySecretsProvider(....);
+```
+
+Get generic app configuration rendered by "host_env" 
+
+``` CSharp
+     var applicationConfig = builder.Configuration.ApplyConfigurationFormatter()
      .GetSection(nameof(ApplicationConfiguration))
      .Get<ApplicationConfiguration>();
+     builder.Services.AddSingleton(applicationConfig);
   ```
 
 or with **shorthand** 
 
 ``` CSharp
 
-     var applicationConfig = Configuration.GetTypeNameFormatted<ApplicationConfiguration>();
-
+     var applicationConfig = builder.Configuration.GetTypeNameFormatted<ApplicationConfiguration>();
+     builder.Services.AddSingleton(applicationConfig);
 ```
 
-The Web Service will be provided with filly resolved configuration with Azure Key Vault secrets. 
 
 ## Azure Function Support
 
@@ -139,3 +143,7 @@ Resolve all keys in a configuration.
     var isUpdated = configuration.ResolveAllKeyValues();
 ```
 
+## Tested with Azure Configuration Providers
+
+- Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Secrets](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvSecrets).
+- Can be used in conjunction with [DotNetCore Azure Configuration KeyVault Certificates](https://github.com/Wallsmedia/DotNetCore.Azure.Configuration.KvCertificates)
