@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>$(DotNetCoreAppVersion);$(DotNetFrameworkVersion);$(DotNetCoreVersion);$(DotNetCoreVersion20)</TargetFrameworks>
+		<TargetFrameworks>$(DotNetCoreAppVersion);$(DotNetCoreVersion);$(DotNetCoreVersion20)</TargetFrameworks>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
 		<PackageReleaseNotes>Supports $(TargetFrameworks). JSON frendly.</PackageReleaseNotes>
-
 		<Description>
-			DotNetCore.Configuration.Formatter is a simple Configuration ASP.NET Core Templates for Microsoft.Extensions.Configuration.
-			It is used Configuration Providers for generating configuration value text output by substituting Configuration Key with its Value.
+			DotNetCore Generic Configuration creates a new configuration values by substituting IConfiguration Keys with Values from other Keys.
 		</Description>
 	</PropertyGroup>
 
@@ -16,9 +14,9 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" IsImplicitlyDefined="true" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == '$(DotNetFrameworkVersion)' Or '$(TargetFramework)' == '$(DotNetCoreVersion)' Or '$(TargetFramework)' == '$(DotNetCoreVersion20)'">
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.0" />
+	<ItemGroup Condition="'$(TargetFramework)' == '$(DotNetCoreVersion)' Or '$(TargetFramework)' == '$(DotNetCoreVersion20)'">
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -35,7 +33,7 @@
 		<PackageProjectUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter.git</RepositoryUrl>
 		<RepositoryType>github</RepositoryType>
-		<PackageTags>DotNetCore Configuration Microsoft Extensions Formatter</PackageTags>
+		<PackageTags>DotNetCore Generic Configuration</PackageTags>
 	</PropertyGroup>
 
 	<PropertyGroup>
