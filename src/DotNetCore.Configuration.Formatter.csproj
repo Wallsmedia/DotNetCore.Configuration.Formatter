@@ -33,7 +33,7 @@
 		<PackageProjectUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Wallsmedia/DotNetCore.Configuration.Formatter.git</RepositoryUrl>
 		<RepositoryType>github</RepositoryType>
-		<PackageTags>DotNetCore Generic Configuration</PackageTags>
+		<PackageTags>NetCore Generic Configuration</PackageTags>
 	</PropertyGroup>
 
 	<PropertyGroup>
