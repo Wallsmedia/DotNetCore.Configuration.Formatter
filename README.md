@@ -13,9 +13,9 @@ It allows to application configuration values to be resloved (renderd) with usin
 - Nuget package [DotNetCore.Configuration.Formatter](https://www.nuget.org/packages/DotNetCore.Configuration.Formatter/)
 
 
-# Version: 8.0.x
+# Version: 9.0.x
 **.Net Core App support**
-- Supports: **net 8.0**, **netstandard2.0**, **netstandard2.1**
+- Supports: **net 9.0**, **netstandard2.0**, **netstandard2.1**
 - Azure Function Support via **ResolveAllKeyValues**
 - **ResolveKeyValue** - Format/resolve a key reference value and replace it in the configuration. 
 - **ResolveAllKeyValues** - Format/resolve all key reference values and replace them in the configuration. 
